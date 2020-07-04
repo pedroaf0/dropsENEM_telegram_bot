@@ -6,6 +6,7 @@ Endpoints usados:
 ```javascript
 `http://54.94.38.92:3000/${process.env.API_TOKEN}/tips`
 ```
+https://who.is/whois-ip/ip-address/54.94.38.92
 - API do app 10 segundos usada para os quizzes:
 ```javascript
 `https://${process.env.DEZ_API_TOKEN}.amazonaws.com/trivia-paperx-production/lives/${data}/questions.js`
