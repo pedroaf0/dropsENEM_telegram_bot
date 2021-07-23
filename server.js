@@ -15,14 +15,16 @@ app.post('/webhook',async (req, res) => {
   })
 app.post('/quiz'+process.env.TELEGRAM_TOKEN,async (req, res) => {
 
-    GetQuiz((statement, alternatives, correct_index, inlineKeyboard)=>{
+    GetQuiz((statement, alternatives, correct_index, videoUrl)=>{
       telegram('sendPoll',{
         chat_id: process.env.CHAT_ID,
         type:'quiz',
         question:statement,
         options:JSON.stringify(alternatives),
         correct_option_id:correct_index,
-        reply_markup:JSON.stringify(inlineKeyboard)
+        explanation:`[Clique aqui para ver a explicação](${videoUrl})`,
+        explanation_parse_mode:"MarkdownV2"
+
       }, ()=>{res.write(statement+'\n'+alternatives) 
               res.end();})
     })
@@ -67,24 +69,9 @@ function GetQuiz(cb){
    console.log(questions[n]);
    console.log(videoUrls[n+2]);
   const { statement, alternatives, correct_index } = questions[n];
-  const inlineKeyboard = {
-    inline_keyboard: [
-        [
-            {
-                text: 'Explicação',
-                url:videoUrls[n+2]
-            }
-        ],
-        [
-          {
-              text: 'Comentar 💬',
-              url:"https://t.me/ChatDropsENEM"
-          }
-      ]
-    ]
-  };
+  const videoUrl = videoUrls[n+2];
 
-  cb(statement, alternatives, correct_index, inlineKeyboard)
+  cb(statement, alternatives, correct_index, videoUrl);
 
 
   });
