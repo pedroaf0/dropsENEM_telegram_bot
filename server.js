@@ -4,6 +4,7 @@ const express = require("express");
 const { telegram } = require('./telegram.js')
 const convert = require('xml-js');
 require('dotenv').config();
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3333;
@@ -30,11 +31,10 @@ app.post('/quiz'+process.env.TELEGRAM_TOKEN,async (req, res) => {
     })
 })
 app.post('/tip'+process.env.TELEGRAM_TOKEN,async (req, res) => {
- GetTip((inlineKeyboard, Message)=>{
+ GetTip((Message)=>{
     telegram('sendMessage', {
         chat_id: process.env.CHAT_ID,
         text: Message,
-        reply_markup:JSON.stringify(inlineKeyboard),
         parse_mode:'Markdown'
         },body=>{console.log(body)
                   res.write(Message) 
@@ -80,35 +80,18 @@ function GetQuiz(cb){
 
 function GetTip(cb){
 
-var options = {
-  method: 'POST',
-  url: `http://54.94.38.92:3000/${process.env.API_TOKEN}/tips`
-};
 
-request(options, function (error, response, body) {
-  if (error) throw new Error(error);
-    var { tipId, exam, subject, content, url} = JSON.parse(body)[getRandomInt(100)]
+    var { tipId, exam, subject, content, url} = JSON.parse(fs.readFileSync('tips.backup.json').toString())[getRandomInt(200)]
   console.log({ tipId, exam, subject, content, url});
 
   content = content.split('**').join('*')
   content = content.split('_').join('')
   subject = subject.split(' ').join('_')
   exam = exam.split(' ').join('_')
-  var Message = `Daily Tip\n#${subject} #${exam}\n\n${content}`
+  const Message = `DICAAA!\n#${subject} #${exam}\n\n${content}`
 
-  const inlineKeyboard = {
-    inline_keyboard: [
-        [
-            {
-                text: 'Comentar 💬',
-                url:"https://t.me/ChatDropsENEM"
-            }
-        ]
-    ]
-  };
-  
-  cb(inlineKeyboard, Message)
-});
+  cb(Message)
+
 
 }
 function getRandomInt(max) {
